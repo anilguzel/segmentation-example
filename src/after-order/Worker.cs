@@ -27,7 +27,9 @@ public class Worker : BackgroundService
     // 1. Requests should be wrapped with sessionId attached to enable tracking session-based logs via Kibana.
     // 2. A basic exception handling has been implemented with try/catch; the code base can be improved.
     // 3. Exception models can be customized.
-    // 4. In case of a possible exception situation (line 93), requeue is applied. The segmentationOrder will be duplicated; this can be resolved in the CheckOrderCountFrequencyAsync method with orderId grouping.
+    // 4. In the case of a potential exception situation (line 93), a requeue is implemented. 
+    // 4.1 As the result, the segmentationOrder will be duplicated; 
+    // 4.2 This can be resolved in the CheckOrderCountFrequencyAsync method with orderId grouping. OR; The SegmentCustomer operation is handled through a different event, which is a better approach.
     // 5. InteractWithCustomerAsync should not be the responsibility of this service; the operation can be split.
     // 6. Information/exception logging should be detailed.
     // 7. Integration & unit tests.
