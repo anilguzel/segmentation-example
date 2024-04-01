@@ -24,13 +24,13 @@ public class Worker : BackgroundService
     }
 
     // improvements:
-    // 1. istekler wrap'lenerek sessionId eklenmeli. boylelikle kibana uzerinden session bazli atilan loglar track edilir.
-    // 2. try/catch ile basit bir exception handling uygulandi, code base iyilestirilebilir.
-    // 3. exception model'ler customize edilebilir.
-    // 4. (93. satirda) olasi bir exception durumunda requeue uygulaniyor. segmentationOrder duplicate olacaktir, bunu CheckOrderCountFrequencyAsync methodunda, orderId grouping ile cozebiliriz.
-    // 5. InteractWithCustomerAsync bu service'in sorumlulugu olmamali, operasyon split edilebilir.
-    // 6. information/exception logging ayrintilindirilmali.
-    // 7. 
+    // 1. Requests should be wrapped with sessionId attached to enable tracking session-based logs via Kibana.
+    // 2. A basic exception handling has been implemented with try/catch; the code base can be improved.
+    // 3. Exception models can be customized.
+    // 4. In case of a possible exception situation (line 93), requeue is applied. The segmentationOrder will be duplicated; this can be resolved in the CheckOrderCountFrequencyAsync method with orderId grouping.
+    // 5. InteractWithCustomerAsync should not be the responsibility of this service; the operation can be split.
+    // 6. Information/exception logging should be detailed.
+    // 7. Integration & unit tests.
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var channel = _rabbitMqConnector.GetChannel();
@@ -61,7 +61,7 @@ public class Worker : BackgroundService
         {
             if (!redLock.IsAcquired)
             {
-                throw new Exception("customer already checking now...");
+                throw new Exception("The customer is already being checked now...");
             }
             else
             {
@@ -73,7 +73,7 @@ public class Worker : BackgroundService
 
                 foreach (var campaign in campaigns)
                 {
-                    // check is user already included potantial campaign
+                    // Check if the customer is already included in the potential campaign.
                     bool isInSegment = await _elasticsearchService.CheckIsSegmentedCustomerAsync(order.Customer.Id, campaign.Id);
                     if (isInSegment) return;
 
@@ -88,7 +88,7 @@ public class Worker : BackgroundService
                     }
                     else
                     {
-                        throw new Exception("customer couldnt indexed to segment");
+                        throw new Exception("An error occurred when indexing the segmented customer.");
                     }
                 }
 
