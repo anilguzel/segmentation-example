@@ -16,7 +16,7 @@ The project can be run on a local machine or a server. Docker is required to run
 
 1. Clone this repository:
     ```bash
-    git clone https://github.com/user/project.git
+    git clone https://github.com/anilguzel/segmentation-example.git
     ```
 
 2. Navigate to the project directory:
